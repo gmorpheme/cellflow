@@ -1,0 +1,29 @@
+* Cellflow
+
+This just contains a few experimental building blocks for solving
+simple cashflows using a spreadsheet-style cell approach.
+
+#+BEGIN_SRC clojure
+
+  ; example from http://en.wikipedia.org/wiki/Internal_rate_of_return
+  (let [events (cashflow
+                (y0 (once (date-time 2001) -4000))
+                (y1 (once (date-time 2002) 1200))
+                (y2 (once (date-time 2003) 1410))
+                (y3 (once (date-time 2004) 1875))
+                (y4 (once (date-time 2005) 1050)))
+        rate (cell 0)
+        pv (cell
+            (apply +
+                   (for [e events]
+                     (pv (date-time 2001) e (rates (cv rate))))))]
+    (solve rate pv 0 1))
+
+; => 0.143...
+
+#+END_SRC
+
+Could be extended to use a more full blooded FRP approach and
+eliminate the mutable state...
+
+See tests for usage. 'lein midje' to run the tests.
